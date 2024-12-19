@@ -9,7 +9,7 @@ const CustomMsaColumnsRV: React.FC<any> = (props) => {
     throw new Error('CustomMsaCanvas must be used within a CustomMsaManager');
   }
   const { scrollY, setScrollY, rowsCount } = scrollContext;
-  const onVerticalScroll = (scrollValues) => {
+  const onVerticalScroll = (scrollValues: { scrollTop: number }) => {
     const { scrollTop: newScrollY } = scrollValues;
     setScrollY(newScrollY);
   }

@@ -45,7 +45,7 @@ const CustomMsaCanvas: React.FC<any> = (props) => {
     container.addEventListener('wheel', handleScroll, { passive: true });
 
     return () =>  {
-      container.removeEventListener('wheel', handleScroll, { passive: true });
+      container.removeEventListener('wheel', handleScroll, { passive: true } as AddEventListenerOptions);
     }
   }, [height, scrollX, scrollY, width, residueWidth])
   return (

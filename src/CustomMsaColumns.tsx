@@ -1,4 +1,4 @@
-window.global = globalThis;
+(window as any).global = globalThis;
 import React, { useContext } from 'react';
 import {Table} from 'fixed-data-table-2'
 import { ScrollContext } from './ScrollContext';
@@ -15,20 +15,19 @@ const CustomMsaColumns: React.FC<any> = (props) => {
     setScrollY(newScrollY);
   }
   return (
+    // @ts-ignore
     <Table
       rowHeight={24}
       headerHeight={30}
       columnsCount={columnsCount}
-      scrollTop={scrollY}
+      scrollTop={scrollY} // @ts-ignore
       onVerticalScroll={onVerticalScroll}
       height={500 + 30}
       width={width}
       getColumn={getColumns}
       columnWidth={50}
       rowsCount={rowsCount}
-    >
-
-    </Table>
+    />
   );
 };
     
