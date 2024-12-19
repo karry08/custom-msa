@@ -19,7 +19,7 @@ const CustomMsaCanvas: React.FC<any> = (props) => {
 
         // Zoom functionality
         event.preventDefault(); // Prevent browser zoom
-        const zoomFactor = 1.1; // Zoom sensitivity
+        const zoomFactor = 1.05; // Zoom sensitivity
         const delta = event.deltaY > 0 ? 1 / zoomFactor : zoomFactor;
         const newResidueWidth = Math.max(
           3,
