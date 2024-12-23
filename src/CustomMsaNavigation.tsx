@@ -1,32 +1,52 @@
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { ScrollContext } from './ScrollContext';
+import { useRecoilState } from "recoil";
+import { maxSeqLengthState, residueWidthState, scrollXR } from "./atoms/Atoms";
 
 interface CustomMsaNavigationProps {
-    min: number;
-    max: number;
     step?: number;
     width: number;
+    userecoil: number
 }
 
 const CustomMsaNavigation: React.FC<CustomMsaNavigationProps> = ({
-  min,
-  max,
   step = 20,
-  width
+  width,
+  userecoil
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
-  const scrollContext = useContext(ScrollContext);
-  if (!scrollContext) {
-    throw new Error('CustomMsaCanvas must be used within a CustomMsaManager');
-  }
-  const { scrollX, setScrollX, residueWidth, setResidueWidth } = scrollContext;
+  const min = 0;
+  // const scrollContext = useContext(ScrollContext);
+  
+  // if (!scrollContext) {
+  //   throw new Error('CustomMsaCanvas must be used within a CustomMsaManager');
+  // }
+  // const { scrollX, setScrollX } = scrollContext;
+  const [residueWidth, setResidueWidth] = useRecoilState(residueWidthState);
+  const [maxSeqLength, _setMaxSeqLength] = useRecoilState(maxSeqLengthState);
+    let scrollX, setScrollX;
+      if (userecoil) {
+        [scrollX, setScrollX] = useRecoilState(scrollXR);
+  
+      }
+      else {
+        const scrollContext = useContext(ScrollContext);
+    
+      if (!scrollContext) {
+        throw new Error('CustomMsaCanvas must be used within a CustomMsaManager');
+      }
+    
+        scrollX = scrollContext.scrollX
+        setScrollX = scrollContext.setScrollX
+  
+      }
   const steps = [];
-  for (let i = min; i <= max; i += step) {
+  for (let i = min; i <= maxSeqLength; i += step) {
     steps.push(i);
   }
 
   const [start, setStart] = useState(scrollX / residueWidth);
-  const [end, setEnd] = useState(max);
+  const [end, setEnd] = useState(maxSeqLength);
   useEffect(() => {
     setStart(scrollX / residueWidth);
     setEnd(scrollX / residueWidth + width / residueWidth);
@@ -55,7 +75,7 @@ const CustomMsaNavigation: React.FC<CustomMsaNavigationProps> = ({
 
     const handleMove = (moveEvent: MouseEvent) => {
       const deltaX = moveEvent.clientX - startX;
-      const deltaValue = (deltaX / scaleWidth) * (max - min);
+      const deltaValue = (deltaX / scaleWidth) * (maxSeqLength - min);
       deltaHandler(deltaValue);
     };
 
@@ -75,7 +95,7 @@ const CustomMsaNavigation: React.FC<CustomMsaNavigationProps> = ({
   };
 
   const dragRightEdge = (delta: number) => {
-    const newEnd = Math.min(max, Math.max(end + delta, start + step));
+    const newEnd = Math.min(maxSeqLength, Math.max(end + delta, start + step));
     setEnd(newEnd);
     onChange(start, newEnd);
   };
@@ -90,8 +110,8 @@ const CustomMsaNavigation: React.FC<CustomMsaNavigationProps> = ({
       newEnd = newStart + range;
     }
 
-    if (newEnd > max) {
-      newEnd = max;
+    if (newEnd > maxSeqLength) {
+      newEnd = maxSeqLength;
       newStart = newEnd - range;
     }
 
@@ -112,7 +132,7 @@ const CustomMsaNavigation: React.FC<CustomMsaNavigationProps> = ({
             key={value}
             style={{
               position: "absolute",
-              left: `${((value - min) / (max - min)) * 100}%`,
+              left: `${((value - min) / (maxSeqLength - min)) * 100}%`,
               transform: "translateX(-50%)",
               textAlign: "center",
             }}
@@ -126,7 +146,7 @@ const CustomMsaNavigation: React.FC<CustomMsaNavigationProps> = ({
         <div
           style={{
             position: "absolute",
-            left: `${((start - min) / (max - min)) * 100}%`,
+            left: `${((start - min) / (maxSeqLength - min)) * 100}%`,
             transform: "translateX(-50%)",
             cursor: "ew-resize",
             height: "20px",
@@ -140,7 +160,7 @@ const CustomMsaNavigation: React.FC<CustomMsaNavigationProps> = ({
         <div
           style={{
             position: "absolute",
-            left: `${((end - min) / (max - min)) * 100}%`,
+            left: `${((end - min) / (maxSeqLength - min)) * 100}%`,
             transform: "translateX(-50%)",
             cursor: "ew-resize",
             height: "20px",
@@ -154,8 +174,8 @@ const CustomMsaNavigation: React.FC<CustomMsaNavigationProps> = ({
         <div
           style={{
             position: "absolute",
-            left: `${((start - min) / (max - min)) * 100}%`,
-            width: `${((end - start) / (max - min)) * 100}%`,
+            left: `${((start - min) / (maxSeqLength - min)) * 100}%`,
+            width: `${((end - start) / (maxSeqLength - min)) * 100}%`,
             height: "20px",
             backgroundColor: "rgba(0, 128, 0, 0.3)",
             cursor: "grab",

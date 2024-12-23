@@ -18,9 +18,16 @@ function CanvasCached(props: Props) {
   const { scrollX, scrollY, canvasHeight, canvasWidth, getSequences, rowsCount, residueWidth } = props;
   const debugFPS = useRef(0);
   const cache = useRef({} as Record<string, CanvasRenderingContext2D>);
-
+  useEffect(() => {
+    const id = setInterval(() => {
+      console.log("FPS", debugFPS.current);
+      debugFPS.current = 0;
+    }, 1000);
+    return () => clearInterval(id);
+  }, [])
   const canvasRef = useRef<HTMLCanvasElement>(null)
 
+  
   useEffect(() => {
     let debugBlocksCount = 0;
 
@@ -33,7 +40,7 @@ function CanvasCached(props: Props) {
     const firstY = Math.floor(scrollY / SEQ_BLOCK_HEIGHT);
     const firstX = Math.floor(scrollX / residueWidth);
     
-    for (let y = firstY; y < rowsCount; y++) {
+    for (let y = firstY; y < firstY+40; y++) {
       //const sequence = SeqData[y];
       const yStart = y * SEQ_BLOCK_HEIGHT - scrollY;
       const yEnd = (y+1) * SEQ_BLOCK_HEIGHT - scrollY;
@@ -114,7 +121,7 @@ function CanvasCached(props: Props) {
       }
     }
     debugFPS.current++;
-  }, [canvasHeight, canvasWidth, scrollX, scrollY, residueWidth])
+  }, [canvasHeight, canvasWidth, scrollX, scrollY, residueWidth, getSequences, rowsCount])
 
   return (
     <canvas ref={canvasRef} />

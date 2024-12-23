@@ -5,6 +5,7 @@ import CustomMsaColumns from './CustomMsaColumns';
 import SeqData from './SeqData';
 import CustomMsaColumnsRV from './CustomMsaColumnsRV';
 import CustomMsaNavigation from './CustomMsaNavigation';
+import CustomMsaColumnsRW from './CustomMsaColumnsRW';
 const App: React.FC = () => {
   const headers = ['S.No', 'EntityId', 'Name'];
 
@@ -43,6 +44,10 @@ const App: React.FC = () => {
     }
   }, [])
   const getSequences = (row: number) => {
+    return {
+      seq:  SeqData[row].seq + SeqData[row].seq + SeqData[row].seq,
+      name: SeqData[row].name
+    } 
     return SeqData[row];
   }
   const Cell = ({ columnIndex, rowIndex, style }: { columnIndex: number, rowIndex: number, style: React.CSSProperties }) => {
@@ -72,17 +77,23 @@ const App: React.FC = () => {
     )
   };
 
-  const useFDT = 0;
-  const columns = useFDT ? <CustomMsaColumns getColumns={getColumn} columnsCount={4} width={400} /> :
-    <CustomMsaColumnsRV Cell={Cell} columnsCount={4} width={400} />;
+  const useFDT = 2;
+  const userecoil = 0;
+  const columns = [
+    <CustomMsaColumns getColumns={getColumn} columnsCount={4} width={400} />,
+    <CustomMsaColumnsRV Cell={Cell} columnsCount={4} width={400} />,
+    <CustomMsaColumnsRW Cell={Cell} columnsCount={4} width={400} rowsCount={1000} userecoil={userecoil}/>
+  ];
   
   return (
     <CustomMsaManager rowsCount={1000}>
-      {columns}
+      {columns[useFDT]}
       <div style={{ position: "relative", top: "-50px" }}>
-        <CustomMsaNavigation min={0} max={300} step={20} width={690} />
+        <CustomMsaNavigation step={50} width={690} userecoil={userecoil}/>
         <CustomMsaCanvas
           height={500}
+          userecoil={userecoil}
+          rowsCount={1000}
           width={690}
           getSequences={getSequences} />
       </div>
